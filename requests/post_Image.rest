@@ -1,0 +1,6 @@
+POST http://localhost:9000/upload/image
+
+
+{
+    "file": "D:/Wallpapers/nb.jpeg"
+}
