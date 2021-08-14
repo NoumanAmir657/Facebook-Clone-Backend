@@ -13,6 +13,15 @@ import mongoPosts from './postModel.js'
 const app = express()
 const port = process.env.PORT || 9000
 
+//pusher
+const pusher = new Pusher({
+    appId: "1249814",
+    key: "93c8583ebfa4115097cd",
+    secret: "6fdbb1ecc1471dcb93cc",
+    cluster: "ap2",
+    useTLS: true
+});
+
 //middlewares
 app.use(express.json()) ;
 app.use(cors())
@@ -27,6 +36,28 @@ const conn = mongoose.createConnection(mongoUri, {
     useUnifiedTopology: true
 })
 
+// pusher connection
+/*
+mongoose.connection.once('open', () => {
+    console.log('pusher')
+
+    const chnageStream = mongoose.connection.collection('posts').watch()
+
+    chnageStream.on('change', (change) => {
+        console.log(change)
+
+        if (change.operationType === 'insert'){
+            console.log('Triggering Pusher')
+
+            pusher.trigger('posts', 'inserted', {
+                change: change
+            })
+        } else {
+            console.log('Error triggering Pusher')
+        }
+    })
+})
+*/
 
 
 let gfs
@@ -118,7 +149,7 @@ app.get('/retrieve/images/single', (req, res) => {
 })
 */
 
-app.get("/retrieve/images/single", (req, res) => {
+app.get("/retrieve/image/single", (req, res) => {
     // console.log('id', req.params.id)
     const file = gfs
       .find({
