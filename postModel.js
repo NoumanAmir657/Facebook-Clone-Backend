@@ -5,7 +5,8 @@ const postModel = mongoose.Schema({
     imgName: String,
     text: String,
     avatar: String,
-    timestamp: String
+    timestamp: String,
+    likes: Number,
 })
 
 postModel.set('toJSON', {

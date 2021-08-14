@@ -165,5 +165,40 @@ app.get("/retrieve/image/single", (req, res) => {
       });
   });
 
+app.put('/upload/post/:id', (req, res) => {
+    console.log('Hello', req.params.id)
+    const body = req.body
+    let newPost 
+
+    if(body.imgName){
+        newPost = {
+            user: body.user,
+            avatar: body.avatar,
+            timestamp: body.timestamp,
+            likes: body.likes,
+            imgName: body.imgName,
+            text: body.text,
+        }
+    }
+    else {
+        newPost = {
+            user: body.user,
+            avatar: body.avatar,
+            timestamp: body.timestamp,
+            likes: body.likes,
+            text: body.text,
+        }
+    }
+    console.log(newPost)
+
+    mongoPosts.findByIdAndUpdate(req.params.id, newPost, {new: true})
+    .then(u => {
+        res.json(u)
+        //console.log(u)
+    })
+
+
+})
+
 //listen part
 app.listen(port, () => console.log(`listening to localhost:${port}`))
