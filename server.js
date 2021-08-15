@@ -37,7 +37,6 @@ const conn = mongoose.createConnection(mongoUri, {
 })
 
 // pusher connection
-/*
 mongoose.connection.once('open', () => {
     console.log('pusher')
 
@@ -47,17 +46,25 @@ mongoose.connection.once('open', () => {
         console.log(change)
 
         if (change.operationType === 'insert'){
-            console.log('Triggering Pusher')
+            console.log('Triggering Pusher for insert')
 
             pusher.trigger('posts', 'inserted', {
                 change: change
             })
-        } else {
+        }
+        else if (change.operationType === 'update') {
+            console.log('Triggering Pusher update')
+
+            pusher.trigger('posts', 'updated', {
+                change: change
+            })
+        }
+        else {
             console.log('Error triggering Pusher')
         }
     })
 })
-*/
+
 
 
 let gfs
@@ -178,6 +185,7 @@ app.put('/upload/post/:id', (req, res) => {
             likes: body.likes,
             imgName: body.imgName,
             text: body.text,
+            likedBy: body.likedBy,
         }
     }
     else {
@@ -187,6 +195,7 @@ app.put('/upload/post/:id', (req, res) => {
             timestamp: body.timestamp,
             likes: body.likes,
             text: body.text,
+            likedBy: body.likedBy,
         }
     }
     console.log(newPost)
