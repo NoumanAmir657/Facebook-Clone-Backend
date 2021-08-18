@@ -186,6 +186,7 @@ app.put('/upload/post/:id', (req, res) => {
             imgName: body.imgName,
             text: body.text,
             likedBy: body.likedBy,
+            comments: body.comments,
         }
     }
     else {
@@ -196,6 +197,7 @@ app.put('/upload/post/:id', (req, res) => {
             likes: body.likes,
             text: body.text,
             likedBy: body.likedBy,
+            comments: body.comments,
         }
     }
     console.log(newPost)

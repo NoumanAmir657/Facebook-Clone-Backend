@@ -9,6 +9,12 @@ const postModel = mongoose.Schema({
     likes: Number,
     likedBy: [
         {type: String}
+    ],
+    comments: [
+        {email: String,
+        comment: String,
+        avatar: String,
+        user: String}
     ]
 })
 
