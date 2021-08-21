@@ -8,6 +8,7 @@ import bodyParser from 'body-parser'
 import path from 'path'
 import Pusher from 'pusher'
 import mongoPosts from './postModel.js'
+import mongoUsers from './userModel.js'
 
 // app config
 const app = express()
@@ -93,6 +94,36 @@ const storage = new GridFsStorage({
 
 const upload = multer({storage})
 
+// cover images storage
+let gfs2
+conn.once('open', () => {
+    console.log('DB connected')
+
+    gfs2 = new mongoose.mongo.GridFSBucket(conn.db, {bucketName: 'covers'}) 
+})
+
+const storage2 = new GridFsStorage({
+    url: mongoUri,
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            const filename = `image-${Date.now()}${path.extname(file.originalname)}`
+
+            const fileInfo = {
+                filename: filename,
+                bucketName: 'covers'
+            }
+
+            resolve(fileInfo)
+            console.log(fileInfo)
+        })
+    }
+})
+const upload2 = multer({storage: storage2})
+
+
+
+
+
 // for saving posts
 mongoose.connect(mongoUri, {
     useCreateIndex: true,
@@ -104,6 +135,10 @@ mongoose.connect(mongoUri, {
 app.get('/', (req,res) => res.status(200).send('hello world'))
 
 app.post('/upload/image', upload.single('file'), (req, res) => {
+    res.status(201).send(req.file)
+})
+
+app.post('/upload/cover', upload2.single('file'), (req, res) => {
     res.status(201).send(req.file)
 })
 
@@ -122,6 +157,30 @@ app.post('/upload/post', (req, res) => {
     })
 })
 
+// 
+app.post('/upload/user', (req, res) => {
+    mongoUsers.find((err, data) => {
+        if (err) {
+            res.status(500).send(err)
+        }
+        else {
+            if (!data.find(user => user.email === req.body.email)){
+                console.log('execute now')
+                mongoUsers.create(req.body, (e, d) => {
+                    if (err) {
+                        res.status(500).send(e)
+                    }
+                    else {
+                        res.status(201).send(d)
+                    }
+                })
+            }
+        }
+    })
+})
+
+
+
 app.get('/retrieve/posts', (req, res) => {
     mongoPosts.find((err, data) => {
         if (err) {
@@ -131,6 +190,17 @@ app.get('/retrieve/posts', (req, res) => {
             data.sort((b,a) => {
                 return a.timestamp - b.timestamp
             })   
+            res.status(200).send(data)
+        }
+    })
+})
+
+app.get('/retrieve/users', (req, res) => {
+    mongoUsers.find((err, data) => {
+        if (err) {
+            res.status(500).send(err)
+        }
+        else{  
             res.status(200).send(data)
         }
     })
@@ -170,7 +240,25 @@ app.get("/retrieve/image/single", (req, res) => {
         }
         gfs.openDownloadStreamByName(req.query.name).pipe(res);
       });
-  });
+});
+
+app.get("/retrieve/cover/single", (req, res) => {
+    // console.log('id', req.params.id)
+    const file = gfs2
+      .find({
+        filename: req.query.name
+      })
+      .toArray((err, files) => {
+        if (!files || files.length === 0) {
+          return res.status(404).json({
+            err: "no files exist"
+          });
+        }
+        gfs2.openDownloadStreamByName(req.query.name).pipe(res);
+      });
+});
+
+
 
 app.put('/upload/post/:id', (req, res) => {
     console.log('Hello', req.params.id)
@@ -207,9 +295,25 @@ app.put('/upload/post/:id', (req, res) => {
         res.json(u)
         //console.log(u)
     })
-
-
 })
+
+app.put('/upload/user/:id', (req,res) => {
+    const body = req.body
+    const updatedUser = {
+        userName: body.userName,
+        email: body.email,
+        fbProfilePic: body.fbProfilePic,
+        coverImage: body.coverImage
+    }
+
+    mongoUsers.findByIdAndUpdate(req.params.id, updatedUser, {new: true})
+    .then(u => {
+        res.json(u)
+    })
+})
+
+
+
 
 //listen part
 app.listen(port, () => console.log(`listening to localhost:${port}`))
