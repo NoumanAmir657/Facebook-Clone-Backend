@@ -258,6 +258,23 @@ app.get("/retrieve/cover/single", (req, res) => {
       });
 });
 
+app.delete('/delete/cover', (req, res) => {
+    const file = gfs2
+    .find({
+        filename: req.query.name
+    })
+    .toArray((err, files) => {
+        if (!files || files.length === 0) {
+          return res.status(404).json({
+            err: "no files exist"
+          });
+        }
+        console.log(files)
+        gfs2.delete(new mongoose.Types.ObjectId(files[0]._id))
+    });
+    
+})
+
 
 
 app.put('/upload/post/:id', (req, res) => {
