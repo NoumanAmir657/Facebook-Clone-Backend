@@ -206,26 +206,6 @@ app.get('/retrieve/users', (req, res) => {
     })
 })
 
-/*
-app.get('/retrieve/images/single', (req, res) => {
-    gfs.find({filename: req.query.name}, (err, file) => {
-        if (err) {
-            res.status(500).send(err)
-        }
-        else {
-            if (!file || file.length === 0){
-                res.status(404).json({err: 'file not found'})
-            }
-            else {
-                const readStream = gfs.createReadStream(file.filename)
-                readStream.pipe(res)
-            }
-            
-        }
-    })
-})
-*/
-
 app.get("/retrieve/image/single", (req, res) => {
     // console.log('id', req.params.id)
     const file = gfs
