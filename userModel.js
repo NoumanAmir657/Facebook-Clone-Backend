@@ -4,7 +4,10 @@ const userModel = mongoose.Schema({
     userName: String,
     email: String,
     fbProfilePic: String,
-    coverImage: String
+    coverImage: String,
+    friends: [
+        {type: String}
+    ]
 })
 
 userModel.set('toJSON', {

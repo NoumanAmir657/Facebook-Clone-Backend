@@ -171,9 +171,15 @@ app.post('/upload/user', (req, res) => {
                         res.status(500).send(e)
                     }
                     else {
+                        console.log('Creating new User')
+                        console.log(d)
                         res.status(201).send(d)
                     }
                 })
+            }
+            else {
+                console.log("Already in db")
+                res.status(201).send(data.filter(user => user.email === req.body.email))
             }
         }
     })
@@ -296,14 +302,17 @@ app.put('/upload/post/:id', (req, res) => {
 
 app.put('/upload/user/:id', (req,res) => {
     const body = req.body
+    console.log(req.params.id)
+
     const updatedUser = {
         userName: body.userName,
         email: body.email,
         fbProfilePic: body.fbProfilePic,
         coverImage: body.coverImage
     }
+    console.log(req.body)
 
-    mongoUsers.findByIdAndUpdate(req.params.id, updatedUser, {new: true})
+    mongoUsers.findByIdAndUpdate(req.params.id, req.body, {new: true})
     .then(u => {
         res.json(u)
     })
