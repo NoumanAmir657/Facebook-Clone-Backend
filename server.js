@@ -304,12 +304,6 @@ app.put('/upload/user/:id', (req,res) => {
     const body = req.body
     console.log(req.params.id)
 
-    const updatedUser = {
-        userName: body.userName,
-        email: body.email,
-        fbProfilePic: body.fbProfilePic,
-        coverImage: body.coverImage
-    }
     console.log(req.body)
 
     mongoUsers.findByIdAndUpdate(req.params.id, req.body, {new: true})
