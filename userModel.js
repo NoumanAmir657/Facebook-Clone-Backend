@@ -6,7 +6,22 @@ const userModel = mongoose.Schema({
     fbProfilePic: String,
     coverImage: String,
     friends: [
-        {type: String}
+        {userName: String,
+         email: String,
+         fbProfilePic: String,
+        }
+    ],
+    pending: [ //requests that the user has not accepted yet
+        {userName: String,
+        email: String,
+        fbProfilePic: String,
+        }
+    ],
+    requestedTo: [
+        {userName: String,
+        email: String,
+        fbProfilePic: String,
+        }
     ]
 })
 
