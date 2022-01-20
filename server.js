@@ -27,8 +27,6 @@ const pusher = new Pusher({
 app.use(express.json()) ;
 app.use(cors())
 
-//db config
-const mongoUri = 'mongodb+srv://Lake:elderscrollsskyrim4@cluster0.r5nrn.mongodb.net/fb-clone-db?retryWrites=true&w=majority'
 
 // gridfs connection
 const conn = mongoose.createConnection(mongoUri, {
